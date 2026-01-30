@@ -4,9 +4,40 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <algorithm>
+#include <cstdlib>
+#include <filesystem>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+namespace {
+    // Helper function to find asset path
+    // Checks multiple locations for portable/installed execution
+    std::string findAssetPath(const std::string& relativePath) {
+        namespace fs = std::filesystem;
+        std::vector<fs::path> searchPaths;
+        
+        // Check environment variable first (for installed package)
+        const char* envPath = std::getenv("ARTEMIS_ASSETS_DIR");
+        if (envPath) {
+            searchPaths.push_back(fs::path(envPath) / relativePath);
+        }
+        
+        // Check relative paths (for development and portable builds)
+        searchPaths.push_back(fs::path("assets") / relativePath);
+        searchPaths.push_back(fs::path("..") / "share" / "ArtemisMoonOrbiterSim" / "assets" / relativePath);
+        searchPaths.push_back(fs::path("share") / "ArtemisMoonOrbiterSim" / "assets" / relativePath);
+        
+        for (const auto& path : searchPaths) {
+            if (fs::exists(path)) {
+                return path.string();
+            }
+        }
+        
+        // Return the default relative path if nothing found
+        return (fs::path("assets") / relativePath).string();
+    }
+}
 
 // Shader sources
 static const char* litVertexShader = R"(
@@ -139,7 +170,8 @@ bool Renderer::init(int width, int height) {
     // Try to load moon texture
     stbi_set_flip_vertically_on_load(true);
     int texWidth, texHeight, nrChannels;
-    unsigned char* data = stbi_load("assets/textures/moon_albedo.png", 
+    std::string moonTexturePath = findAssetPath("textures/moon_albedo.png");
+    unsigned char* data = stbi_load(moonTexturePath.c_str(), 
                                     &texWidth, &texHeight, &nrChannels, 0);
     if (data) {
         glGenTextures(1, &m_moonTexture);
@@ -158,7 +190,7 @@ bool Renderer::init(int width, int height) {
         m_hasMoonTexture = true;
         std::cout << "Loaded moon texture: " << texWidth << "x" << texHeight << std::endl;
     } else {
-        std::cout << "No moon texture found, using procedural color" << std::endl;
+        std::cout << "No moon texture found at '" << moonTexturePath << "', using procedural color" << std::endl;
     }
     
     return true;
