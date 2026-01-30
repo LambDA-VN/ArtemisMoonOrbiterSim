@@ -390,3 +390,13 @@ void Ui::recordTelemetry(double simTime, double altitude, double speed, double e
         m_eccentricityHistory.pop_front();
     }
 }
+
+void Ui::updateBurn(double dt) {
+    if (m_burnActive) {
+        m_burnTimeRemaining -= static_cast<float>(dt);
+        if (m_burnTimeRemaining <= 0.0f) {
+            m_burnActive = false;
+            m_burnTimeRemaining = 0.0f;
+        }
+    }
+}

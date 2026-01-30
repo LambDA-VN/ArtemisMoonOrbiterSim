@@ -165,7 +165,6 @@ void Mesh::createArrow(float length, float radius) {
     float sectorStep = 2.0f * static_cast<float>(M_PI) / sectors;
     float shaftLength = length * 0.7f;
     float shaftRadius = radius * 0.3f;
-    float headLength = length * 0.3f;
     float headRadius = radius;
     
     // Shaft base center

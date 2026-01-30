@@ -232,7 +232,7 @@ void Renderer::renderMoon() {
     m_litShader.setMat4("model", model);
     m_litShader.setMat4("view", view);
     m_litShader.setMat4("projection", projection);
-    m_litShader.setMat4("normalMatrix", glm::mat4(normalMatrix));
+    m_litShader.setMat3("normalMatrix", normalMatrix);
     
     // Sun direction (normalized)
     glm::vec3 sunDir = glm::normalize(glm::vec3(1.0f, 0.2f, 0.1f));
@@ -266,14 +266,6 @@ void Renderer::renderSpacecraft(const SpacecraftState& state, float throttle) {
     // Create model matrix with position and orientation
     glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);
     
-    // Apply attitude quaternion
-    glm::mat4 rotation = glm::mat4_cast(glm::quat(
-        static_cast<float>(state.attitude.w),
-        static_cast<float>(state.attitude.x),
-        static_cast<float>(state.attitude.y),
-        static_cast<float>(state.attitude.z)
-    ));
-    
     // Rotate to align with velocity direction for prograde orientation
     glm::vec3 velocity = glm::normalize(glm::vec3(state.velocity));
     if (glm::length(glm::vec3(state.velocity)) > 0.01f) {
@@ -296,7 +288,7 @@ void Renderer::renderSpacecraft(const SpacecraftState& state, float throttle) {
     m_litShader.setMat4("model", model);
     m_litShader.setMat4("view", view);
     m_litShader.setMat4("projection", projection);
-    m_litShader.setMat4("normalMatrix", glm::mat4(normalMatrix));
+    m_litShader.setMat3("normalMatrix", normalMatrix);
     
     glm::vec3 sunDir = glm::normalize(glm::vec3(1.0f, 0.2f, 0.1f));
     m_litShader.setVec3("lightDir", sunDir);

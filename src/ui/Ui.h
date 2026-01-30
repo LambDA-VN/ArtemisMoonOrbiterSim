@@ -40,6 +40,9 @@ public:
     Spacecraft::ThrustMode getThrustMode() const { return m_thrustMode; }
     bool isBurnActive() const { return m_burnActive; }
     
+    // Update burn timer (call from main loop)
+    void updateBurn(double dt);
+    
     // Impact screen
     bool isImpactOccurred() const { return m_impactOccurred; }
     void setImpactOccurred(bool impact) { m_impactOccurred = impact; }

@@ -125,6 +125,9 @@ void Application::update() {
         m_physicsAccumulator = maxAccumulator;
     }
     
+    // Update burn timer in UI (uses simulation time scale)
+    m_ui.updateBurn(frameTime);
+    
     // Handle burn timing from UI
     if (m_ui.isBurnActive()) {
         // The burn is active, throttle is set from UI
