@@ -24,6 +24,7 @@ FetchContent_Declare(
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(glfw)
 
 # glad
@@ -116,3 +117,40 @@ if(UNIX AND NOT APPLE)
     find_package(Threads REQUIRED)
     target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads ${CMAKE_DL_LIBS})
 endif()
+
+# Install configuration
+install(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION bin
+)
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets
+    DESTINATION share/${PROJECT_NAME}
+)
+
+install(FILES ${CMAKE_SOURCE_DIR}/README.md
+    DESTINATION share/${PROJECT_NAME}
+)
+
+# CPack configuration for Linux standalone package
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(CPACK_PACKAGE_VENDOR "LambDA-VN")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Artemis Moon Orbiter Simulation")
+set(CPACK_PACKAGE_DESCRIPTION "An interactive C++ simulation of an Artemis-style spacecraft orbiting the Moon, with real-time rendering, UI controls, and basic mission-style features.")
+set(CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/LambDA-VN/ArtemisMoonOrbiterSim")
+set(CPACK_RESOURCE_FILE_README ${CMAKE_SOURCE_DIR}/README.md)
+
+# Linux-specific packaging
+if(UNIX AND NOT APPLE)
+    set(CPACK_GENERATOR "TGZ;ZIP")
+    set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-linux-x86_64")
+    set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
+    
+    # Install launcher script
+    install(PROGRAMS ${CMAKE_SOURCE_DIR}/scripts/artemis-launcher.sh
+        DESTINATION bin
+        RENAME run-artemis.sh
+    )
+endif()
+
+include(CPack)

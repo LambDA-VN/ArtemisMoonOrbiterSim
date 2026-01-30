@@ -2,6 +2,21 @@
 
 An interactive C++ simulation of an Artemis-style spacecraft orbiting the Moon, with real-time rendering, UI controls, and basic mission-style features including orbit insertion, burns, camera modes, and telemetry.
 
+## Quick Start (Linux Standalone Package)
+
+Download the latest pre-built package from the [Releases](https://github.com/LambDA-VN/ArtemisMoonOrbiterSim/releases) page.
+
+```bash
+# Download and extract
+tar -xzf ArtemisMoonOrbiterSim-*-linux-x86_64.tar.gz
+cd ArtemisMoonOrbiterSim-*-linux-x86_64
+
+# Run the simulator
+./bin/run-artemis.sh
+```
+
+**Requirements**: OpenGL 3.3+ compatible graphics driver (Mesa or proprietary drivers).
+
 ## Features
 
 - **Two-body orbital mechanics** with RK4 integration for accurate simulation
