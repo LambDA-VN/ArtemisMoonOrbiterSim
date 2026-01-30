@@ -14,27 +14,28 @@ namespace {
     // Helper function to find asset path
     // Checks multiple locations for portable/installed execution
     std::string findAssetPath(const std::string& relativePath) {
-        std::vector<std::string> searchPaths;
+        namespace fs = std::filesystem;
+        std::vector<fs::path> searchPaths;
         
         // Check environment variable first (for installed package)
         const char* envPath = std::getenv("ARTEMIS_ASSETS_DIR");
         if (envPath) {
-            searchPaths.push_back(std::string(envPath) + "/" + relativePath);
+            searchPaths.push_back(fs::path(envPath) / relativePath);
         }
         
         // Check relative paths (for development and portable builds)
-        searchPaths.push_back("assets/" + relativePath);
-        searchPaths.push_back("../share/ArtemisMoonOrbiterSim/assets/" + relativePath);
-        searchPaths.push_back("share/ArtemisMoonOrbiterSim/assets/" + relativePath);
+        searchPaths.push_back(fs::path("assets") / relativePath);
+        searchPaths.push_back(fs::path("..") / "share" / "ArtemisMoonOrbiterSim" / "assets" / relativePath);
+        searchPaths.push_back(fs::path("share") / "ArtemisMoonOrbiterSim" / "assets" / relativePath);
         
         for (const auto& path : searchPaths) {
-            if (std::filesystem::exists(path)) {
-                return path;
+            if (fs::exists(path)) {
+                return path.string();
             }
         }
         
         // Return the default relative path if nothing found
-        return "assets/" + relativePath;
+        return (fs::path("assets") / relativePath).string();
     }
 }
 
@@ -189,7 +190,7 @@ bool Renderer::init(int width, int height) {
         m_hasMoonTexture = true;
         std::cout << "Loaded moon texture: " << texWidth << "x" << texHeight << std::endl;
     } else {
-        std::cout << "No moon texture found, using procedural color" << std::endl;
+        std::cout << "No moon texture found at '" << moonTexturePath << "', using procedural color" << std::endl;
     }
     
     return true;

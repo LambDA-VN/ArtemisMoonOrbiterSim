@@ -8,8 +8,11 @@ INSTALL_DIR="$(dirname "$SCRIPT_DIR")"
 # Set assets path relative to installation
 export ARTEMIS_ASSETS_DIR="${INSTALL_DIR}/share/ArtemisMoonOrbiterSim/assets"
 
-# Change to the installation directory
-cd "$INSTALL_DIR" || exit 1
+# Verify the executable exists
+if [[ ! -x "${SCRIPT_DIR}/ArtemisMoonOrbiterSim" ]]; then
+    echo "Error: Could not find ArtemisMoonOrbiterSim executable in ${SCRIPT_DIR}" >&2
+    exit 1
+fi
 
 # Run the simulator
 exec "${SCRIPT_DIR}/ArtemisMoonOrbiterSim" "$@"
